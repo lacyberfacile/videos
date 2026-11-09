@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+<defs>
+  <linearGradient id="lockgrad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#22D3EE"/><stop offset="1" stop-color="#22C55E"/>
+  </linearGradient>
+  <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+    <stop offset="0" stop-color="#22D3EE" stop-opacity="0.35"/>
+    <stop offset="1" stop-color="#22D3EE" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="bggrad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#111A2E"/><stop offset="1" stop-color="#0A0F1C"/>
+  </linearGradient>
+</defs>
+  <rect width="1080" height="1080" fill="url(#bggrad)"/>
+  <circle cx="540.0" cy="540.0" r="453.59999999999997" fill="url(#glow)"/>
+  <circle cx="540.0" cy="540.0" r="432.0" fill="none" stroke="#22D3EE" stroke-opacity="0.25" stroke-width="8.64"/>
+  
+  <path d="M 399.6 508.304 V 423.46799999999996 A 140.4 140.4 0 0 1 680.4 423.46799999999996 V 508.304"
+        fill="none" stroke="#22D3EE" stroke-width="47.736000000000004" stroke-linecap="round"/>
+  <rect x="320.976" y="506.304" width="438.04800000000006" height="314.49600000000004" rx="67.392" fill="url(#lockgrad)"/>
+  <path d="M 444.528 669.84192 L 517.536 732.74112 L 646.704 600.6528"
+        fill="none" stroke="#0A0F1C" stroke-width="42.12" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
