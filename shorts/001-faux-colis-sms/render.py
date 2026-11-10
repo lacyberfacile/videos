@@ -219,6 +219,7 @@ def main():
     a = ap.parse_args()
     durs = durations(a.audio_dir)
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+    (HERE / "out").mkdir(exist_ok=True)
     (HERE / "out" / "timings.json").write_text(json.dumps(durs, indent=1))
 
     if a.preview:
@@ -245,7 +246,8 @@ def main():
             filt.append(f"[{i-1}:a]aresample=48000,apad=pad_dur={pad}[a{i}]")
         filt.append("".join(f"[a{i}]" for i in range(1, 11)) + "concat=n=10:v=0:a=1[out]")
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", *inputs, "-filter_complex", ";".join(filt), "-map", "[out]", str(concat)], check=True)
-        cmd += ["-i", str(concat), "-c:a", "aac", "-b:a", "192k", "-shortest"]
+        # durée fixée sur la vidéo (et non -shortest, qui coupait la fin et cassait le pipe)
+        cmd += ["-i", str(concat), "-filter:a", "apad", "-c:a", "aac", "-b:a", "192k", "-t", f"{nframes / FPS:.3f}"]
     cmd += ["-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p", "-movflags", "+faststart", a.out]
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     starts = [sum(durs[:i]) for i in range(len(durs))]
