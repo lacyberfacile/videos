@@ -130,7 +130,7 @@ SCENES = [s1, s2, s3, s4, s5,
 SUBS = [True] * 8 + [False]
 MUSIC = None  # pas de musique de fond (décision de Néo, 19/11/2026)
 # (segment, offset s ou -fraction, son, gain)
-# Sons doux uniquement (pop, success) : pas de whoosh, stamp, alert, glitch, type (décision de Néo, 19/11/2026)
+# Uniquement le pop discret : pas de success, whoosh, stamp, alert, glitch, type (décision de Néo, 19/11/2026)
 SFX = [
     (0, 0.1, 'pop', 0.5),
     (0, 0.6, 'pop', 0.4),
