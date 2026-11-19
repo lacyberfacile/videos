@@ -130,14 +130,13 @@ SCENES = [s1, s2, s3, s4, s5,
 SUBS = [True] * 8 + [False]
 MUSIC = None  # pas de musique de fond (décision de Néo, 19/11/2026)
 # (segment, offset s ou -fraction, son, gain)
+# Sons doux uniquement (pop, success) : pas de whoosh, stamp, alert, glitch, type (décision de Néo, 19/11/2026)
 SFX = [
-    (0, 0.1, "pop", 0.5), (0, 0.6, "pop", 0.4), (0, -0.55, "stamp", 0.5),
-    (1, 0.0, "whoosh", 0.35), (1, 0.4, "pop", 0.35),
-    (2, 0.0, "whoosh", 0.35), (2, 0.5, "pop", 0.45),
-    (3, 0.0, "whoosh", 0.35), (3, 0.8, "alert", 0.35),
-    (4, 0.0, "whoosh", 0.35), (4, 0.6, "glitch", 0.4),
-    (5, 0.2, "whoosh", 0.4), (6, 0.2, "whoosh", 0.4), (7, 0.2, "whoosh", 0.4),
-    (8, 0.6, "pop", 0.5),
+    (0, 0.1, 'pop', 0.5),
+    (0, 0.6, 'pop', 0.4),
+    (1, 0.4, 'pop', 0.35),
+    (2, 0.5, 'pop', 0.45),
+    (8, 0.6, 'pop', 0.5),
 ]
 
 if __name__ == "__main__":

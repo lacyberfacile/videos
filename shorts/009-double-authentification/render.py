@@ -148,14 +148,18 @@ SCENES[5:8] = [reflex_trio(ITEMS, n, DRAW) for n in range(3)]
 SUBS = [True] * 8 + [False]
 MUSIC = None  # pas de musique de fond (décision de Néo, 19/11/2026)
 # (segment, offset s ou -fraction, son, gain)
+# Sons doux uniquement (pop, success) : pas de whoosh, stamp, alert, glitch, type (décision de Néo, 19/11/2026)
 SFX = [
-    (0, 0.2, "type", 0.4), (0, 0.7, "stamp", 0.5), (0, -0.5, "success", 0.4),
-    (1, 0.0, "whoosh", 0.35), (1, 1.3, "success", 0.35),
-    (2, 0.0, "whoosh", 0.35), (2, 0.8, "glitch", 0.4), (2, 1.8, "success", 0.4),
-    (3, 0.2, "pop", 0.4), (3, 1.4, "pop", 0.4),
-    (4, 0.0, "whoosh", 0.35), (4, 1.3, "success", 0.4),
-    (5, 0.4, "success", 0.4), (6, 0.4, "success", 0.4), (7, 0.4, "success", 0.4),
-    (8, 0.6, "pop", 0.5),
+    (0, -0.5, 'success', 0.4),
+    (1, 1.3, 'success', 0.35),
+    (2, 1.8, 'success', 0.4),
+    (3, 0.2, 'pop', 0.4),
+    (3, 1.4, 'pop', 0.4),
+    (4, 1.3, 'success', 0.4),
+    (5, 0.4, 'success', 0.4),
+    (6, 0.4, 'success', 0.4),
+    (7, 0.4, 'success', 0.4),
+    (8, 0.6, 'pop', 0.5),
 ]
 
 if __name__ == "__main__":
