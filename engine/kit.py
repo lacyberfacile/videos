@@ -28,7 +28,7 @@ def durations(audio_dir, segments):
     return [max(2.0, len(s) / 15.5) for s in segments]
 
 
-def run(script_file, segments, scenes, subs):
+def run(script_file, segments, scenes, subs, sfx=None, music=None, final=None):
     here = Path(script_file).resolve().parent
     ap = argparse.ArgumentParser()
     ap.add_argument("--audio-dir")
@@ -78,6 +78,9 @@ def run(script_file, segments, scenes, subs):
     p.stdin.close()
     p.wait()
     print(a.out, round(total, 2), "s")
+    if a.audio_dir and final and (sfx or music):
+        mix_audio(a.out, here / final, durs, sfx or [], music)
+        print(here / final)
 
 
 # ======================= pictos =======================
@@ -372,3 +375,50 @@ def outro(variant=0):
                 fx, fy = W / 2 + 180 + (1 - kk) * 200, 1440 + (1 - kk) * 250
                 dr.ellipse([fx - 36, fy - 36, fx + 36, fy + 36], fill=WHITE + (210,))
     return s
+
+
+# ======================= mix audio (musique + SFX) =======================
+AUDIO = ROOT / "assets/audio"
+
+
+def mix_audio(video, out, durs, sfx, music=None, music_vol=0.12):
+    """Voix (piste du MP4) + musique de fond baissée sous la voix (sidechain) + SFX, puis loudnorm -14 LUFS.
+    sfx = [(segment, offset, nom, gain)] ; segment indexé à 0 ; offset en s, ou négatif = fraction de la durée du segment."""
+    starts = [sum(durs[:i]) for i in range(len(durs))]
+    total = sum(durs)
+    cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", str(video)]
+    filt = ["[0:a]asplit=2[v][vk]"]
+    mix = ["[v]"]
+    k = 1
+    if music:
+        cmd += ["-stream_loop", "-1", "-i", str(AUDIO / f"{music}.mp3")]
+        filt.append(f"[{k}:a]atrim=0:{total:.3f},afade=t=in:d=0.8,afade=t=out:st={max(0, total - 1.5):.3f}:d=1.5,volume={music_vol}[m]")
+        filt.append("[m][vk]sidechaincompress=threshold=0.03:ratio=6:attack=20:release=350[md]")
+        mix.append("[md]")
+        k += 1
+    else:
+        filt.append("[vk]anullsink")
+    for j, (seg, off, name, gain) in enumerate(sfx):
+        t = starts[seg] + (off if off >= 0 else -off * durs[seg])
+        cmd += ["-i", str(AUDIO / f"{name}.mp3")]
+        filt.append(f"[{k}:a]silenceremove=start_periods=1:start_threshold=-50dB,adelay={int(t * 1000)}:all=1,volume={gain}[s{j}]")
+        mix.append(f"[s{j}]")
+        k += 1
+    filt.append("".join(mix) + f"amix=inputs={len(mix)}:normalize=0:duration=first,loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000[a]")
+    cmd += ["-filter_complex", ";".join(filt), "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", str(out)]
+    subprocess.run(cmd, check=True)
+    fix_loudness(out)
+
+
+def fix_loudness(path, target=-14.0):
+    """2e passe : mesure (ebur128) puis gain linéaire + limiteur (-1.5 dBTP) pour atteindre la cible."""
+    import re, shutil
+    r = subprocess.run(["ffmpeg", "-i", str(path), "-af", "ebur128", "-f", "null", "-"], capture_output=True, text=True)
+    i = float(re.findall(r"I:\s+(-?[\d.]+) LUFS", r.stderr)[-1])
+    if abs(i - target) < 0.5:
+        return i
+    tmp = str(path) + ".tmp.mp4"
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(path), "-af", f"volume={target - i:.2f}dB,alimiter=limit=0.84:level=false",
+                    "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", tmp], check=True)
+    shutil.move(tmp, path)
+    return i
