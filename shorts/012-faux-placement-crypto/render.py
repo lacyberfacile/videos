@@ -38,6 +38,8 @@ def bill(img, cx, cy, s, color, angle=0, alpha=255):
 def star_person(img, cx, cy, s, alpha=255):
     gold = (234, 179, 8)
     person(img, cx, cy, s, gold, alpha)
+    if s < 0.3:
+        return
     dr = D(img)
     for i in range(5):  # petites étoiles qui scintillent
         a = i * 1.25
